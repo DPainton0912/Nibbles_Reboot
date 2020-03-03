@@ -168,7 +168,7 @@ def main():
             snack = cube(randomSnack(rows, s), color=(255,0,0))
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos,s.body[x+1:])):
-                messageBox('You Lost!', 'Score: ' + str(len(s.body)) + '\nPlay again...')
+                messageBox('Game Over!', 'Score: ' + str(len(s.body)) + '\nPlay again?')
                 s.reset((10,10))
                 break   
         redrawWindow(win)
