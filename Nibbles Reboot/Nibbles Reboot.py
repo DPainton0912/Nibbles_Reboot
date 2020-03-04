@@ -184,8 +184,9 @@ def gameStart():
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    main()
                     startGame = False
+    if startGame == False:
+        main()
 
 def gameEnd(s):
     endGame = True
