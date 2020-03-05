@@ -1,10 +1,15 @@
 #Python Nibbles Reboot
-
+import time
 import math
 import random
 import pygame
-import tkinter as tk
-from tkinter import messagebox
+pygame.init()
+size = 500
+rows = 20
+win = pygame.display.set_mode((size, size))
+win.fill((61,43,31))
+WHITE = ( 255, 255, 255)
+pygame.display.set_caption("Nibbles Reboot")
 
 class cube(object):
     rows = 20
@@ -50,21 +55,25 @@ class snake(object):
             keys = pygame.key.get_pressed()
             for key in keys:
                 if keys[pygame.K_LEFT]:
-                    self.dirnx = -1
-                    self.dirny = 0
-                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                    if self.dirnx != 1:
+                        self.dirnx = -1
+                        self.dirny = 0
+                        self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
                 elif keys[pygame.K_RIGHT]:
-                    self.dirnx = 1
-                    self.dirny = 0
-                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                    if self.dirnx != -1:
+                        self.dirnx = 1
+                        self.dirny = 0
+                        self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
                 elif keys[pygame.K_UP]:
-                    self.dirnx = 0
-                    self.dirny = -1
-                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                    if self.dirny != 1:
+                        self.dirnx = 0
+                        self.dirny = -1
+                        self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
                 elif keys[pygame.K_DOWN]:
-                    self.dirnx = 0
-                    self.dirny = 1
-                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                    if self.dirny != -1: 
+                        self.dirnx = 0
+                        self.dirny = 1
+                        self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
         for i, c in enumerate(self.body):
             p = c.pos[:]
             if p in self.turns:
@@ -118,12 +127,11 @@ def drawGrid(w, rows, surface):
         pygame.draw.line(surface, (255,255,255), (x,0),(x,w))
         pygame.draw.line(surface, (255,255,255), (0,y),(w,y))
 
-def redrawWindow(surface):
-    global rows, width, s, snack
-    surface.fill((71,43,18))
+def redrawWindow(surface, s, snack):
+    surface.fill((61,43,31))
     s.draw(surface)
     snack.draw(surface)
-    drawGrid(width,rows, surface)
+    drawGrid(size,rows, surface)
     pygame.display.update()
 
 def randomSnack(rows, item):
@@ -137,25 +145,9 @@ def randomSnack(rows, item):
             break
     return (x,y)
 
-def messageBox(subject, content):
-    root = tk.Tk()
-    root.attributes("-topmost", True)
-    root.withdraw()
-    messagebox.showinfo(subject, content)
-    try:
-        root.destroy()
-    except:
-        pass
-
-def gameStart():
-    pass
-
 def main():
-    global width, rows, s, snack
-    width = 500
-    rows = 20
-    win = pygame.display.set_mode((width, width))
     s = snake((255,182,193), (10,10))
+    s.reset((10,10))
     snack = cube(randomSnack(rows, s), color=(255,0,0))
     flag = True
     clock = pygame.time.Clock()
@@ -168,12 +160,59 @@ def main():
             snack = cube(randomSnack(rows, s), color=(255,0,0))
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos,s.body[x+1:])):
-                messageBox('You Lost!', 'Score: ' + str(len(s.body)) + '\nPlay again...')
-                s.reset((10,10))
-                break   
-        redrawWindow(win)
+                gameEnd(s)
+                flag = False  
+        redrawWindow(win, s, snack)
 
-def gameEnd():
-    pass
+def gameStart():
+    startGame = True
+    clock = pygame.time.Clock()
+    while startGame:
+        pygame.time.delay(125)
+        clock.tick(10)
+        pygame.font.init()
+        gameStartFont = pygame.font.Font('freesansbold.ttf', 50)
+        nibblesRebootSurf = gameStartFont.render('Nibbles Reboot', True, WHITE)
+        playSurf = gameStartFont.render('Press space to play', True, WHITE)
+        win.blit(nibblesRebootSurf,
+            (size // 8, size // 2.5))
+        win.blit(playSurf,
+            (size // 35, size // 2))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    startGame = False
+    if startGame == False:
+        main()
 
-main()
+def gameEnd(s):
+    endGame = True
+    score = str(len(s.body))
+    while endGame:
+        win.fill((61,43,31))
+        pygame.font.init()
+        gameEndFont = pygame.font.Font('freesansbold.ttf', 50)
+        gameOverSurf = gameEndFont.render('Game Over!', True, WHITE)
+        overSurf = gameEndFont.render('Score: ' + score, True, WHITE)
+        win.blit(gameOverSurf,
+            (size // 5, size // 2.5))
+        win.blit(overSurf,
+            (size // 3.5, size // 2))
+        pygame.display.update()
+        clock = pygame.time.Clock()
+        pygame.time.delay(125)
+        clock.tick(10)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    endGame = False
+                    
+    if endGame == False:
+        main()
+
+gameStart()
