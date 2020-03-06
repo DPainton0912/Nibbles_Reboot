@@ -6,8 +6,9 @@ import pygame
 pygame.init()
 size = 500
 rows = 20
-RED = (255, 0, 0)
-WHITE = (255, 255, 255)
+red = (255, 0, 0)
+white = (255, 255, 255)
+black = (0, 0, 0)
 win = pygame.display.set_mode((size, size))
 win.fill((157, 107, 72))
 pygame.display.set_caption("Nibbles Reboot")
@@ -36,8 +37,8 @@ class cube(object):
             radius = 3
             circleMiddle = (i*dis+centre-radius,j*dis+8)
             circleMiddle2 = (i*dis + dis -radius*2, j*dis+8)
-            pygame.draw.circle(surface, (0,0,0), circleMiddle, radius)
-            pygame.draw.circle(surface, (0,0,0), circleMiddle2, radius)
+            pygame.draw.circle(surface, (black), circleMiddle, radius)
+            pygame.draw.circle(surface, (black), circleMiddle2, radius)
 
 class snake(object):
     body = []
@@ -125,25 +126,34 @@ def drawGrid(w, rows, surface):
     for l in range(rows):
         x = x + sizeBtwn
         y = y + sizeBtwn
-        pygame.draw.line(surface, (255,255,255), (x,0),(x,w))
-        pygame.draw.line(surface, (255,255,255), (0,y),(w,y))
+        pygame.draw.line(surface, (black), (x,0),(x,w))
+        pygame.draw.line(surface, (black), (0,y),(w,y))
 
 def redrawWindow(surface, s, snack):
     surface.fill((157, 107, 72))
     s.draw(surface)
     snack.draw(surface)
-    drawGrid(size,rows, surface)
+    drawGrid(size, rows, surface)
     pygame.display.update()
 
 def randomSnack(rows, item):
     x = float(random.randint(1, rows-2))
     y = float(random.randint(1, rows-2))
     return(x, y)
+    #positions = item.body
+    #while True:
+        #x = random.randrange(rows)
+        #y = random.randrange(rows)
+        #if len(list(filter(lambda z:z.pos == (x,y), positions))) > 0:
+            #continue
+        #else:
+            #break
+    #return (x,y)
 
 def main():
     s = snake((78, 41, 15), (10,10))
     s.reset((10,10))
-    snack = cube(randomSnack(rows, s), color=(255,0,0))
+    snack = cube(randomSnack(rows, s), color=(red))
     flag = True
     clock = pygame.time.Clock()
     while flag:
@@ -152,11 +162,11 @@ def main():
         s.move()
         if s.body[0].pos == snack.pos:
             s.addCube()
-            snack = cube(randomSnack(rows, s), color=(255,0,0))
+            snack = cube(randomSnack(rows, s), color=(red))
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos,s.body[x+1:])):
                 gameEnd(s)
-                flag = False
+                flag = False 
         snakeHeadX, snakeHeadY = s.body[0].pos
         if s.dirnx != 1 and snakeHeadX == 19:
             gameEnd(s)
@@ -180,8 +190,8 @@ def gameStart():
         clock.tick(10)
         pygame.font.init()
         gameStartFont = pygame.font.Font('freesansbold.ttf', 50)
-        nibblesRebootSurf = gameStartFont.render('Nibbles Reboot', True, WHITE)
-        playSurf = gameStartFont.render('Press space to play', True, WHITE)
+        nibblesRebootSurf = gameStartFont.render('Nibbles Reboot', True, white)
+        playSurf = gameStartFont.render('Press space to play', True, white)
         win.blit(nibblesRebootSurf,
             (size // 8, size // 2.5))
         win.blit(playSurf,
@@ -203,12 +213,15 @@ def gameEnd(s):
         win.fill((157, 107, 72))
         pygame.font.init()
         gameEndFont = pygame.font.Font('freesansbold.ttf', 50)
-        gameOverSurf = gameEndFont.render('Game Over!', True, WHITE)
-        overSurf = gameEndFont.render('Score: ' + score, True, WHITE)
+        gameOverSurf = gameEndFont.render('Game Over!', True, white)
+        scoreSurf = gameEndFont.render('Score: ' + score, True, white)
+        restartSurf = gameEndFont.render('Press space to play', True, white)
         win.blit(gameOverSurf,
-            (size // 5, size // 2.5))
-        win.blit(overSurf,
-            (size // 3.5, size // 2))
+            (size // 5, size // 3.75))
+        win.blit(scoreSurf,
+            (size // 3.5, size // 2.75))
+        win.blit(restartSurf,
+            (size // 35, size // 2.25))
         pygame.display.update()
         clock = pygame.time.Clock()
         pygame.time.delay(125)
