@@ -208,7 +208,7 @@ def gameStart():
 
 def gameEnd(s):
     endGame = True
-    score = str(len(s.body))
+    score = str(len(s.body)-1)
     while endGame:
         win.fill((157, 107, 72))
         pygame.font.init()
