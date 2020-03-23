@@ -140,15 +140,6 @@ def randomSnack(rows, item):
     x = float(random.randint(1, rows-2))
     y = float(random.randint(1, rows-2))
     return(x, y)
-    #positions = item.body
-    #while True:
-        #x = random.randrange(rows)
-        #y = random.randrange(rows)
-        #if len(list(filter(lambda z:z.pos == (x,y), positions))) > 0:
-            #continue
-        #else:
-            #break
-    #return (x,y)
 
 def main():
     s = snake((78, 41, 15), (10,10))
