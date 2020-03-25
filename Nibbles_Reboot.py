@@ -3,6 +3,7 @@ import time
 import math
 import random
 import pygame
+import Leaderboard
 pygame.init()
 size = 500
 rows = 20
@@ -140,6 +141,15 @@ def randomSnack(rows, item):
     x = float(random.randint(1, rows-2))
     y = float(random.randint(1, rows-2))
     return(x, y)
+    # positions = item.body
+    # while True:
+    #     x = random.randrange(rows)
+    #     y = random.randrange(rows)
+    #     if len(list(filter(lambda z:z.pos == (x,y), positions))) > 0:
+    #         continue
+    #     else:
+    #         break
+    # return (x,y)
 
 def main():
     s = snake((78, 41, 15), (10,10))
@@ -176,6 +186,9 @@ def main():
 def gameStart():
     startGame = True
     clock = pygame.time.Clock()
+    h = Leaderboard.Leaderboard("Bob")
+    leaderboard = h.ReadFile()
+    h.ShowLeaderboard(leaderboard)
     while startGame:
         pygame.time.delay(125)
         clock.tick(10)
@@ -200,6 +213,12 @@ def gameStart():
 def gameEnd(s):
     endGame = True
     score = str(len(s.body)-1)
+    playername = input("Enter your name: ").strip().lower().capitalize()
+    h = Leaderboard.Leaderboard(playername)
+    leaderboard = h.ReadFile()
+    leaderboard = h.NewHighscore(s, leaderboard)
+    h.ShowLeaderboard(leaderboard)
+    h.WriteFile(leaderboard)
     while endGame:
         win.fill((157, 107, 72))
         pygame.font.init()
